@@ -1,0 +1,21 @@
+use std::collections::HashMap;
+
+fn main() {
+    let r = get_ip();
+
+    println!("r {:?}", r);
+}
+
+fn get_ip() -> Result<String, Box<dyn std::error::Error>> {
+    let resp = reqwest::blocking::get("https://us-central1-brettskicom.cloudfunctions.net/HeaderDump2")?
+        .json::<HashMap<String, String>>()?;
+    // return Some(ip)    
+    println!("{:#?}", resp.get("x-forwarded-for"));
+
+    let curip = match resp.get("x-forwarded-for") {
+        Some(val) => val,
+        None => "none",
+        
+    };
+    Ok(String::from(curip))
+}
